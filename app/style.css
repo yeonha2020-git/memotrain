@@ -372,9 +372,10 @@ html.big .phone .num { font-size: 2.3rem; }
 .mini { position: relative; width: 58px; height: 58px; }
 .mini-bubble {
   position: absolute; top: 62px; right: 0; z-index: 10; white-space: nowrap;
-  font-size: .95rem; padding: .35rem .7rem; animation: pop .25s ease-out;
+  max-width: none; font-size: .95rem; padding: .35rem .7rem; animation: pop .25s ease-out;
+  transform-origin: top right;
 }
-.mini-bubble::after { left: auto; right: 18px; top: -12px; bottom: auto; border: 10px solid transparent; border-bottom-color: var(--ink); border-top: 0; }
+.mini-bubble::after { left: auto; right: 18px; top: -12px; bottom: auto; transform: none; border: 10px solid transparent; border-bottom-color: var(--ink); border-top: 0; }
 .streak-chip {
   font-size: 1rem; font-weight: 800; background: #FDECEA; border: 2px solid #F0B6AE;
   border-radius: 999px; padding: .3rem .9rem; white-space: nowrap;
