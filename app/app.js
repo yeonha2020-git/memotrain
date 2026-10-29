@@ -943,6 +943,14 @@ const SCREENS = {
 
 // 웹앱(휴대폰)으로 열었을 때만 오프라인 저장 사용
 if ('serviceWorker' in navigator && location.protocol.startsWith('http')) {
+  // 새 버전이 설치되면 한 번 새로고침해서 바로 새 화면을 보여 줍니다
+  const hadController = !!navigator.serviceWorker.controller;
+  let reloaded = false;
+  navigator.serviceWorker.addEventListener('controllerchange', () => {
+    if (!hadController || reloaded) return;
+    reloaded = true;
+    location.reload();
+  });
   navigator.serviceWorker.register('sw.js').catch(() => {});
 }
 
