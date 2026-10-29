@@ -23,7 +23,7 @@ const dayKey = (d = new Date()) =>
 function freshToday() { return { date: dayKey(), done: [], bonus: false, checkin: false, xp: 0 }; }
 function defaultState() {
   return {
-    name: '', pet: '복실이', xp: 0, streak: 0, lastDay: null, days: 0,
+    pet: '복실이', xp: 0, streak: 0, lastDay: null, days: 0,
     today: freshToday(), levels: {}, best: {}, plays: {}, history: {},
     items: [], equip: {}, storyIdx: 0,
     settings: { sound: true, voice: true, big: false },
@@ -135,7 +135,7 @@ function on(sel, fn, root = document) { $$(sel, root).forEach((el) => el.addEven
 function koreanDate(d = new Date()) {
   return `${d.getFullYear()}년 ${d.getMonth() + 1}월 ${d.getDate()}일 ${WEEK[d.getDay()]}요일`;
 }
-const callName = () => (S.name ? `${S.name}님` : '어르신');
+const callName = () => '주인님';
 
 function topBar(back = true) {
   return `<header class="top">
@@ -902,9 +902,7 @@ function screenSettings() {
   render(`${topBar()}
     <div class="game-title">⚙️ 설정</div>
     <section class="card-box field">
-      <label for="name">어떻게 불러 드릴까요?</label>
-      <input id="name" maxlength="10" placeholder="예: 김순자" value="${esc(S.name)}">
-      <label for="pet" style="margin-top:.8rem">강아지 이름</label>
+      <label for="pet">강아지 이름</label>
       <input id="pet" maxlength="8" placeholder="복실이" value="${esc(S.pet)}">
     </section>
     <button class="toggle" data-t="big">🔠 글씨 크게 보기 ${sw(S.settings.big)}</button>
@@ -918,7 +916,6 @@ function screenSettings() {
     </section>
     <button class="btn" id="reset" style="color:var(--red)">기록 모두 지우기</button>`);
 
-  $('#name').addEventListener('input', (e) => { S.name = e.target.value.trim(); save(); });
   $('#pet').addEventListener('input', (e) => { S.pet = e.target.value.trim() || '복실이'; save(); });
   on('[data-t]', (el) => {
     const k = el.dataset.t;
@@ -928,7 +925,7 @@ function screenSettings() {
   });
   on('#reset', () => {
     if (!confirm(`${pet()} 성장, 선물, 기록이 모두 지워집니다. 정말 지울까요?`)) return;
-    const keep = { name: S.name, pet: S.pet, settings: S.settings };
+    const keep = { pet: S.pet, settings: S.settings };
     S = Object.assign(defaultState(), keep); save();
     toast('기록을 모두 지웠어요');
     go('home');
