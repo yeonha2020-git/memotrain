@@ -1,0 +1,29 @@
+{
+  "name": "memotrain",
+  "version": "1.0.0",
+  "description": "어르신을 위한 매일 기억력 훈련 놀이 - 기억력 쑥쑥",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "dist": "electron-builder --win"
+  },
+  "build": {
+    "appId": "com.memotrain.app",
+    "productName": "기억력쑥쑥",
+    "files": [
+      "main.js",
+      "app/**/*"
+    ],
+    "win": {
+      "target": "nsis"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true
+    }
+  },
+  "devDependencies": {
+    "electron": "^45.1.0",
+    "electron-builder": "^26.18.0"
+  }
+}
