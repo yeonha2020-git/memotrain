@@ -13,6 +13,8 @@ const GAMES = [
   { id: 'song', icon: '🎵', name: '노래·속담 퀴즈', desc: '추억의 노래와 속담', color: '#D9A21B', run: () => gameSong() },
 ];
 const MAX_LV = { match: 5, janggu: 6, market: 5, number: 6 };
+const WINS_TO_LEVEL = 10; // 같은 단계에서 이만큼 잘하면 다음 단계로
+const SLIPS_TO_DROP = 2;  // 연달아 이만큼 어려워하면 한 단계 쉽게
 const DAILY_GOAL = 3;
 const DAILY_BONUS = 50;
 
@@ -24,7 +26,7 @@ function freshToday() { return { date: dayKey(), done: [], bonus: false, checkin
 function defaultState() {
   return {
     pet: '복실이', xp: 0, streak: 0, lastDay: null, days: 0,
-    today: freshToday(), levels: {}, best: {}, plays: {}, history: {},
+    today: freshToday(), levels: {}, wins: {}, slips: {}, best: {}, plays: {}, history: {},
     items: [], equip: {}, storyIdx: 0,
     settings: { sound: true, voice: true, big: false },
   };
@@ -294,8 +296,18 @@ function finish(id, r) {
   let lvMsg = '';
   const lv = S.levels[id] || 1;
   if (MAX_LV[id]) {
-    if (r.lv > 0 && lv < MAX_LV[id]) { S.levels[id] = lv + 1; lvMsg = `🎖️ 실력이 늘었어요! 다음에는 <b>${lv + 1}단계</b>로 도전해요.`; }
-    else if (r.lv < 0 && lv > 1) { S.levels[id] = lv - 1; lvMsg = `다음에는 조금 쉽게 <b>${lv - 1}단계</b>로 해 볼게요.`; }
+    if (r.lv > 0) {
+      S.slips[id] = 0;
+      if (lv < MAX_LV[id]) {
+        S.wins[id] = (S.wins[id] || 0) + 1;
+        const left = WINS_TO_LEVEL - S.wins[id];
+        if (left <= 0) { S.levels[id] = lv + 1; S.wins[id] = 0; lvMsg = `🎖️ 실력이 늘었어요! 다음에는 <b>${lv + 1}단계</b>로 도전해요.`; }
+        else lvMsg = `👍 참 잘하셨어요! ${left}번 더 잘하시면 <b>${lv + 1}단계</b>로 올라가요.`;
+      }
+    } else if (r.lv < 0) {
+      S.slips[id] = (S.slips[id] || 0) + 1;
+      if (lv > 1 && S.slips[id] >= SLIPS_TO_DROP) { S.levels[id] = lv - 1; S.wins[id] = 0; S.slips[id] = 0; lvMsg = `다음에는 조금 쉽게 <b>${lv - 1}단계</b>로 해 볼게요.`; }
+    } else S.slips[id] = 0;
   }
 
   if (!S.today.done.includes(id)) S.today.done.push(id);
