@@ -40,6 +40,8 @@ S.settings = Object.assign(defaultState().settings, S.settings);
 if (S.totalCoins && !S.xp) S.xp = S.totalCoins;
 ['coins', 'totalCoins', 'tree', 'persimmons'].forEach((k) => delete S[k]);
 if (S.today.coins != null) { S.today.xp = S.today.coins; delete S.today.coins; }
+// 난이도를 천천히 올리는 방식으로 바뀌면서 단계를 한 번만 1단계로 되돌립니다 (간식·선물은 그대로)
+if (!S.slowLevels) { S.levels = {}; S.wins = {}; S.slips = {}; S.slowLevels = true; }
 
 function save() { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch { /* 저장 공간 없음 */ } }
 
@@ -937,7 +939,7 @@ function screenSettings() {
   });
   on('#reset', () => {
     if (!confirm(`${pet()} 성장, 선물, 기록이 모두 지워집니다. 정말 지울까요?`)) return;
-    const keep = { pet: S.pet, settings: S.settings };
+    const keep = { pet: S.pet, settings: S.settings, slowLevels: true };
     S = Object.assign(defaultState(), keep); save();
     toast('기록을 모두 지웠어요');
     go('home');
